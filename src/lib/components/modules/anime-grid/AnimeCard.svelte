@@ -7,7 +7,7 @@
 	import Score from './Score.svelte';
 	import { Button } from '$lib/components/ui/button';
 
-	import { cn, md, stringifyList } from '$lib/utils';
+	import { cn, md, stringifyList, capitalize } from '$lib/utils';
 	import { map } from 'zod';
 
 	let { anime }: { anime: Anime } = $props();
@@ -18,10 +18,6 @@
 
 	const truncate = (str: string, maxChars: number = 100) => {
 		return str.length > maxChars ? `${str.substring(0, maxChars)}...` : str;
-	};
-
-	const capitalize = (str: string) => {
-		return str.charAt(0).toUpperCase() + str.slice(1);
 	};
 
 	let showMore = $state(false);
@@ -126,9 +122,9 @@
 				<span class={cn('overflow-hidden', showMore ? '' : 'line-clamp-3')} tabindex="0" role="button">
 					{anime.synopsis}
 				</span>
-				<Button variant="link" class="m-0 inline p-0 text-xs underline" on:click={() => (showMore = !showMore)}
-					>{#if showMore}show less{:else if anime.synopsis.length > 200}show more{/if}</Button
-				>
+				<!-- <Button variant="link" class="m-0 inline p-0 text-xs underline" on:click={() => (showMore = !showMore)}
+					>{#if showMore}show less{:else if anime.synopsis?.length > 200}show more{/if}</Button
+				> -->
 			</div>
 		</div>
 		<footer class="card__footer col-span-2 flex flex-col gap-2 [grid-area:footer]">

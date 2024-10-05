@@ -18,8 +18,8 @@
 	let gridZoomLevel = $state(defaultZoomLevel);
 </script>
 
-<div class="flex flex-col gap-2 p-4 @container">
-	<div
+<div class="m-4 flex flex-col gap-2 @container">
+	<!-- <div
 		class="sticky top-2 z-10 flex w-full justify-end rounded-lg border bg-card/75 p-1 text-card-foreground shadow backdrop-blur-lg"
 	>
 		<div id="size-controls" class="flex gap-2">
@@ -35,7 +35,7 @@
 				<ZoomIn />
 			</Button>
 		</div>
-	</div>
+	</div> -->
 	<section id="anime-grid" class="grid grid-cols-[repeat(auto-fit,_minmax(350px,_1fr))] gap-4">
 		{#each anime as animeData}
 			<AnimeCard anime={animeData} />

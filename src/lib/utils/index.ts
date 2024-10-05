@@ -40,3 +40,14 @@ export const stringifyList = (list: string[], includeAnd?: boolean, links?: stri
 		})
 		.join(', ');
 };
+
+export const capitalize = (str: string) => {
+	return str.charAt(0).toUpperCase() + str.slice(1);
+};
+
+export const titleCase = (str: string) => {
+	return str
+		.split(' ')
+		.map((word) => capitalize(word))
+		.join(' ');
+};
