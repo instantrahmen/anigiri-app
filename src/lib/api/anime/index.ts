@@ -1,7 +1,27 @@
-const API_BASE_URL = 'https://api.jikan.moe/v4';
+import { JikanClient, type JikanResponse, type Anime, type AnimeSeason } from '@tutkli/jikan-ts';
 
-export const fetchEntireAnimeDatabase = async () => {
-	const response = await fetch('https://api.jikan.moe/v4/anime');
-	const data = await response.json();
-	return data.data;
+const jikan = new JikanClient();
+
+const currentYear = new Date().getFullYear();
+
+export const fetchAnimeThisSeason = async () => {
+	const thisSeason = await jikan.seasons.getSeasonNow();
+
+	return thisSeason;
+};
+
+export const fetchSpecificSeason = async (season: AnimeSeason, year: number = currentYear) => {
+	const specificSeason = await jikan.seasons.getSeason(year, season, {});
+
+	return specificSeason;
+};
+
+export const fetchAllSeasons = async (year: number = currentYear) => {
+	const seasons: AnimeSeason[] = ['winter', 'spring', 'summer', 'fall'];
+	const promises = seasons.map((season) => fetchSpecificSeason(season, year));
+
+	return (await Promise.all(promises)).map((season, i) => ({
+		season: seasons[i],
+		anime: season
+	}));
 };
