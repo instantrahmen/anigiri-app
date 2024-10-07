@@ -5,7 +5,6 @@
 	import ChevronLeft from 'lucide-svelte/icons/chevron-left';
 	import ChevronRight from 'lucide-svelte/icons/chevron-right';
 	import * as Pagination from '$lib/components/ui/pagination';
-	// import { mediaQuery } from 'svelte-legos';
 	import { ArrowLeft, ArrowRight } from 'lucide-svelte';
 	import { Button } from '$lib/components/ui/button';
 	import type { JikanPagination } from '@tutkli/jikan-ts';
@@ -48,7 +47,8 @@
 							'inline-flex h-min items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5',
 							'text-sm font-medium ring-offset-background transition-all',
 							'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
-							'disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm'
+							'disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm',
+							'capitalize'
 						)}
 					>
 						{season}
@@ -59,7 +59,7 @@
 	</nav>
 </div>
 
-<div class="sticky top-2 z-10 m-4">
+<div class="sticky top-2 z-[11] m-4">
 	{@render paginationLinks()}
 </div>
 

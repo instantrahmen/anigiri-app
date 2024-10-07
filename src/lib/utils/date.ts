@@ -70,3 +70,9 @@ export const validateYear = async (year: string, throwIfInvalid: boolean = false
 
 	return parseInt(year);
 };
+
+export const secondsToMs = (seconds: number) => seconds * 1000;
+export const minutesToMs = (minutes: number) => secondsToMs(minutes * 60);
+export const hoursToMs = (hours: number) => minutesToMs(hours * 60);
+export const daysToMs = (days: number) => hoursToMs(days * 24);
+export const weeksToMs = (weeks: number) => daysToMs(weeks * 7);

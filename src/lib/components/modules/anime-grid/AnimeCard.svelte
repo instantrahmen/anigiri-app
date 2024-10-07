@@ -1,7 +1,8 @@
 <script lang="ts">
 	import Sheet from './../Sheet.svelte';
 	import type { Anime } from '@tutkli/jikan-ts';
-	import { Edit, Calendar, PlayCircle, CheckCircle, Youtube } from 'lucide-svelte';
+	import { Edit, Calendar, PlayCircle, CheckCircle, Heart, BookHeart } from 'lucide-svelte';
+	import Icon from '@iconify/svelte';
 	import { Badge } from '$lib/components/ui/badge';
 	import { Card } from '$lib/components/ui/card';
 	import Score from './Score.svelte';
@@ -16,26 +17,40 @@
 
 	let sheetOpen = $state(false);
 
-	const truncate = (str: string, maxChars: number = 100) => {
-		return str.length > maxChars ? `${str.substring(0, maxChars)}...` : str;
-	};
-
 	let showMore = $state(false);
 
 	const gridAreasDefault = `
 		[grid-template-areas:'header_header''image_meta''footer_footer']
 	`;
 
-	const styleToTailwindClass = (style: string) => {
-		return style.replace(' ', '_');
-	};
+	let favorite = $state(false);
 </script>
 
-<div class="card__container h-full w-full @container">
+<div class="card__container relative h-full w-full @container">
+	<!-- Favorite Button -->
+	<Button
+		variant="ghost"
+		size="icon"
+		class={cn(
+			'absolute -right-3 -top-3 z-10 rounded-full border',
+			favorite
+				? ' border-none bg-none text-3xl text-red-500 hover:text-red-500 active:text-4xl'
+				: 'bg-muted/10 text-2xl text-muted-foreground backdrop-blur-md active:text-xl',
+			'transition-all'
+		)}
+		on:click={() => (favorite = !favorite)}
+	>
+		<Icon icon={favorite ? 'mdi:heart' : 'mdi:heart-outline'} class="h-[1em] w-[1em]" />
+		<span class="sr-only">Add to favorites</span>
+	</Button>
+
 	<div
 		class={cn(
 			'card__root',
 			'grid h-full w-full gap-3 overflow-hidden rounded-xl border bg-card bg-opacity-50 p-3 shadow-md backdrop-blur-lg',
+			'grid-rows-[auto_1fr_auto]',
+			'z-2',
+
 			gridAreasDefault
 		)}
 	>
@@ -64,7 +79,7 @@
 				class={cn('self-center rounded-lg border  shadow-md', 'h-full w-full object-cover')}
 			/>
 		</div>
-		<div class="card__content flex flex-1 flex-col text-sm [grid-area:meta]">
+		<div class="card__content flex h-full flex-1 flex-col text-sm [grid-area:meta]">
 			<div class="card__metadata mb-2 grid grid-cols-2 gap-2 text-xs">
 				<div>
 					<p class="font-semibold">Studio</p>
@@ -99,8 +114,10 @@
 					</p>
 				</div>
 				<div class="text-right">
-					<p class="font-semibold">Season</p>
-					<p class="text-muted-foreground">{capitalize(anime.season || 'TBA')} {anime.year}</p>
+					{#if anime.season}
+						<p class="font-semibold">Season</p>
+						<p class="text-muted-foreground">{capitalize(anime.season || 'TBA')} {anime.year}</p>
+					{/if}
 				</div>
 				<div>
 					<p class="font-semibold">Status</p>
@@ -115,16 +132,13 @@
 				</div>
 				<div class="text-right">
 					<p class="font-semibold">Episodes</p>
-					<p class="text-muted-foreground">{anime.episodes}</p>
+					<p class="text-muted-foreground">{anime.episodes || '??'}</p>
 				</div>
 			</div>
 			<div class="card__synopsis mb-2 flex-1 text-xs text-muted-foreground">
 				<span class={cn('overflow-hidden', showMore ? '' : 'line-clamp-3')} tabindex="0" role="button">
 					{anime.synopsis}
 				</span>
-				<!-- <Button variant="link" class="m-0 inline p-0 text-xs underline" on:click={() => (showMore = !showMore)}
-					>{#if showMore}show less{:else if anime.synopsis?.length > 200}show more{/if}</Button
-				> -->
 			</div>
 		</div>
 		<footer class="card__footer col-span-2 flex flex-col gap-2 [grid-area:footer]">
@@ -135,14 +149,10 @@
 					</Badge>
 				{/each}
 			</div>
-			<div class="card__footer-links flex h-min flex-wrap gap-1 rounded-md border bg-background">
+			<div class="card__footer-links flex h-min flex-wrap items-center gap-1 rounded-md border bg-background p-1">
+				<span class="mx-2 flex-1 text-xs capitalize text-muted-foreground">links:</span>
 				<Button variant="ghost" size="icon" href={anime.url} class="text-2xl" aria-label="My Anime List listing">
-					<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"
-						><path
-							fill="currentColor"
-							d="M8.273 7.247v8.423l-2.103-.003v-5.216l-2.03 2.404l-1.989-2.458l-.02 5.285H.001L0 7.247h2.203l1.865 2.545l2.015-2.546zm8.628 2.069l.025 6.335h-2.365l-.008-2.871h-2.8c.07.499.21 1.266.417 1.779c.155.381.298.751.583 1.128l-1.705 1.125c-.349-.636-.622-1.337-.878-2.082a9.3 9.3 0 0 1-.507-2.179c-.085-.75-.097-1.471.107-2.212a3.9 3.9 0 0 1 1.161-1.866c.313-.293.749-.5 1.1-.687s.743-.264 1.107-.359a7.4 7.4 0 0 1 1.191-.183c.398-.034 1.107-.066 2.39-.028l.545 1.749H14.51c-.593.008-.878.001-1.341.209a2.24 2.24 0 0 0-1.278 1.92l2.663.033l.038-1.81zm3.992-2.099v6.627l3.107.032l-.43 1.775h-4.807V7.187z"
-						/></svg
-					>
+					<Icon icon="simple-icons:myanimelist" class="h-6 w-6" />
 				</Button>
 
 				<Button
@@ -153,13 +163,7 @@
 					aria-label="Trailer"
 					target="_blank"
 				>
-					<!-- <Youtube class="h-6 w-6" /> -->
-					<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
-						<path
-							fill="currentColor"
-							d="M23.498 6.186a3.02 3.02 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.02 3.02 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.02 3.02 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.02 3.02 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814M9.545 15.568V8.432L15.818 12z"
-						/>
-					</svg>
+					<Icon icon="mdi:youtube" class="h-6 w-6" />
 				</Button>
 			</div>
 		</footer>
