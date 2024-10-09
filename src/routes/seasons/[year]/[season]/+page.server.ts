@@ -7,6 +7,9 @@ export const load = async ({ params: { year: yearString, season: seasonString },
 	const season = await validateSeason(seasonString);
 	const page = parseInt(url.searchParams.get('page') || '1') || 1;
 
+	// get all search params as object
+	const searchParams = Object.fromEntries(url.searchParams);
+
 	// redirect if year or season is different after validation to make sure the url matches what is being shown
 	if (parseInt(yearString) !== year || seasonString !== season) {
 		redirect(301, `/seasons/${year}/${season}`);
@@ -15,7 +18,8 @@ export const load = async ({ params: { year: yearString, season: seasonString },
 	return {
 		year,
 		season,
-		anime: await fetchSpecificSeason(season, year, { page }),
+		anime: await fetchSpecificSeason(season, year, { ...searchParams }),
 		page,
+		searchParams,
 	};
 };

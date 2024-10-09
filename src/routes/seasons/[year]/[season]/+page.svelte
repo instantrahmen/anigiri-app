@@ -1,10 +1,7 @@
 <script lang="ts">
-	import * as Tabs from '$lib/components/ui/tabs';
 	import AnimeGrid from '$lib/components/modules/anime-grid/AnimeGrid.svelte';
 	import { cn, md, titleCase, validSeasons } from '$lib/utils';
-	import ChevronLeft from 'lucide-svelte/icons/chevron-left';
-	import ChevronRight from 'lucide-svelte/icons/chevron-right';
-	import * as Pagination from '$lib/components/ui/pagination';
+	import Pagination from '$lib/components/modules/pagination/Pagination.svelte';
 	import { ArrowLeft, ArrowRight } from 'lucide-svelte';
 	import { Button } from '$lib/components/ui/button';
 	import type { JikanPagination } from '@tutkli/jikan-ts';
@@ -12,9 +9,13 @@
 	let { data } = $props();
 
 	let pagination: JikanPagination | undefined = $derived(data.anime.pagination);
+
 	let page = $state(data.page);
 </script>
 
+<pre>
+{JSON.stringify(data.searchParams, null, 2)}
+</pre>
 <div class="m-4 flex h-10 flex-row justify-end gap-4">
 	<h2 class="flex-1 self-center justify-self-start align-middle text-xl tracking-wide text-muted-foreground">
 		{titleCase(`${data.season} ${data.year} Anime`)}
@@ -60,12 +61,18 @@
 </div>
 
 <div class="sticky top-2 z-[11] m-4">
-	{@render paginationLinks()}
+	<Pagination
+		bind:page
+		count={pagination?.items?.total || 0}
+		perPage={data.anime.pagination?.items?.per_page || 25}
+		siblingCount={3}
+		onPageChange={(page) => goto(`/seasons/${data.year}/${data.season}?page=${page}`)}
+	/>
 </div>
 
 <AnimeGrid anime={data.anime.data} />
 
-{#snippet paginationLinks()}
+<!-- {#snippet paginationLinks()}
 	<Pagination.Root
 		bind:page
 		count={pagination?.items?.total || 0}
@@ -105,7 +112,7 @@
 			</Pagination.Item>
 		</Pagination.Content>
 	</Pagination.Root>
-{/snippet}
+{/snippet} -->
 
 <!-- <div
 	class="flex flex-row items-center justify-center gap-2 rounded-lg border bg-card text-sm font-semibold tracking-wide text-muted-foreground shadow-md"

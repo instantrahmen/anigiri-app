@@ -4,46 +4,45 @@
 	import { Edit, Calendar, PlayCircle, CheckCircle, Heart, BookHeart } from 'lucide-svelte';
 	import Icon from '@iconify/svelte';
 	import { Badge } from '$lib/components/ui/badge';
-	import { Card } from '$lib/components/ui/card';
-	import Score from './Score.svelte';
 	import { Button } from '$lib/components/ui/button';
-
 	import { cn, md, stringifyList, capitalize } from '$lib/utils';
-	import { map } from 'zod';
+	import { page } from '$app/stores';
+	import type { Session } from '@auth/sveltekit';
 
 	let { anime }: { anime: Anime } = $props();
+
+	let session = $page.data.session;
 
 	const dataMarkdown = '```json\n' + JSON.stringify(anime, null, 2) + '\n```';
 
 	let sheetOpen = $state(false);
-
 	let showMore = $state(false);
+	let favorite = $state(false);
 
 	const gridAreasDefault = `
 		[grid-template-areas:'header_header''image_meta''footer_footer']
 	`;
-
-	let favorite = $state(false);
 </script>
 
 <div class="card__container relative h-full w-full @container">
 	<!-- Favorite Button -->
-	<Button
-		variant="ghost"
-		size="icon"
-		class={cn(
-			'absolute -right-3 -top-3 z-10 rounded-full border',
-			favorite
-				? ' border-none bg-none text-3xl text-red-500 hover:text-red-500 active:text-4xl'
-				: 'bg-muted/10 text-2xl text-muted-foreground backdrop-blur-md active:text-xl',
-			'transition-all'
-		)}
-		on:click={() => (favorite = !favorite)}
-	>
-		<Icon icon={favorite ? 'mdi:heart' : 'mdi:heart-outline'} class="h-[1em] w-[1em]" />
-		<span class="sr-only">Add to favorites</span>
-	</Button>
-
+	{#if session}
+		<Button
+			variant="ghost"
+			size="icon"
+			class={cn(
+				'absolute -right-3 -top-3 z-10 rounded-full border',
+				favorite
+					? ' border-none bg-none text-3xl text-red-500 hover:text-red-500 active:text-4xl'
+					: 'bg-muted/10 text-2xl text-muted-foreground backdrop-blur-md active:text-xl',
+				'transition-all'
+			)}
+			on:click={() => (favorite = !favorite)}
+		>
+			<Icon icon={favorite ? 'mdi:heart' : 'mdi:heart-outline'} class="h-[1em] w-[1em]" />
+			<span class="sr-only">Add to favorites</span>
+		</Button>
+	{/if}
 	<div
 		class={cn(
 			'card__root',

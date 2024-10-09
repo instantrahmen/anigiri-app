@@ -104,3 +104,58 @@ model ListItem {
   owner   Account @relation(fields: [ownerId], references: [id])
   ownerId String
 }
+
+model Anime {
+  id            String @id @default(cuid())
+  title         String
+  type          String
+  episodes      Int
+  status        String
+  picture       String
+  thumbnail     String
+  animeSeasonId String
+
+  duration     Int
+  animeSeason  AnimeSeason    @relation(fields: [animeSeasonId], references: [id])
+  sources      Source[]
+  synonyms     Synonym[]
+  relatedAnime RelatedAnime[]
+  tags         Tag[]
+}
+
+model AnimeSeason {
+  id     String @id @default(cuid())
+  season String
+  year   Int
+
+  anime Anime[]
+
+  @@unique([season, year], name: "uniqueSeasonYear")
+}
+
+model Source {
+  value   String @unique
+  anime   Anime  @relation(fields: [animeId], references: [id])
+  animeId String
+}
+
+model Synonym {
+  id      String @id @default(cuid())
+  anime   Anime  @relation(fields: [animeId], references: [id])
+  animeId String
+  value   String
+}
+
+model RelatedAnime {
+  id      String @id @default(cuid())
+  anime   Anime  @relation(fields: [animeId], references: [id])
+  animeId String
+  value   String
+}
+
+model Tag {
+  id      String @id @default(cuid())
+  anime   Anime  @relation(fields: [animeId], references: [id])
+  animeId String
+  value   String
+}

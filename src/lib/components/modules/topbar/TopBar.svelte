@@ -10,6 +10,7 @@
 	import type { Session } from '@auth/sveltekit';
 	import UserMenu from './UserMenu.svelte';
 	import DropdownMenuItem from '$lib/components/ui/dropdown-menu/dropdown-menu-item.svelte';
+	import { browser } from '$app/environment';
 
 	let { session }: { session: Session | null } = $props();
 
@@ -21,6 +22,7 @@
 	};
 
 	let userInitials = $derived(getUserInitials(session?.user?.name || 'User'));
+	let origin = browser ? window.location.origin : '';
 </script>
 
 <header
@@ -58,10 +60,20 @@
 		</Button>
 
 		{#if !session || !session.user}
-			<Button variant="outline" class="rounded-md tracking-wide" on:click={() => signIn('discord')}>
-				<Icon class="mr-2 h-[1.3em] w-[1.3em]" icon="fa6-brands:discord" />
-				<span>Sign in</span>
-			</Button>
+			{#if origin}
+				<Button
+					variant="outline"
+					class="rounded-md tracking-wide"
+					on:click={() =>
+						signIn('discord', {
+							callbackUrl: `${origin}/auth/callback/discord`,
+						})}
+				>
+					<Icon class="mr-2 h-[1.3em] w-[1.3em]" icon="fa6-brands:discord" />
+					<span>Sign in</span>
+					{origin}
+				</Button>
+			{/if}
 		{:else}
 			<UserMenu avatarUrl={session.user.image} fallback={userInitials}>
 				<DropdownMenuItem
